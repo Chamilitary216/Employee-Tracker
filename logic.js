@@ -85,17 +85,18 @@ const viewAllEmployees = () => {
 
 // View All Roles
 
-const viewByRoles = () => {
-    const query = "SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;"
-    connection.query(query, (err, res)=>{
-        if (err) throw err
-        console.table(res)
+
+function viewByRoles() {
+    connection.query("SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;", 
+    function(err, res) {
+    if (err) throw err
+    console.table(res)
         initApp()
     })    
 }
 
-// Sort by Department
-const viewByDepartment = () => {
+// See by Department
+function viewByDepartment() {
     const query = "SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;"
     connection.query(query, (err, res)=>{
         if (err) throw err
@@ -108,20 +109,20 @@ const viewByDepartment = () => {
 
 // Roles for adding Employee
 
-const roleArray = [];
+var roleArr = [];
 function selectRole() {
   connection.query("SELECT * FROM role", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
-      roleArray.push(res[i].title);
+      roleArr.push(res[i].title);
     }
 
   })
-  return roleArray;
+  return roleArr;
 }
+//Role for adding Manager
 
-//Rolls for Managers Add Prompt
-const managersArray = [];
+var managersArray = [];
 function selectManager() {
   connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
     if (err) throw err
@@ -132,7 +133,7 @@ function selectManager() {
   })
   return managersArray;
 }
-
+//Add Employee
 function addEmployee() { 
     inquirer.prompt([
         {
@@ -153,7 +154,7 @@ function addEmployee() {
         },
         {
             name: "choice",
-            type: "list",
+            type: "rawlist",
             message: "Whats their managers name?",
             choices: selectManager()
         }
@@ -175,16 +176,16 @@ function addEmployee() {
 
   })
 }
-//============= Update Employee ==========================//
+//Update Employee 
   function updateEmployee() {
-    connection.query("SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
-    // console.log(res)
+    connection.query("SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;", 
+    function(err, res) {
      if (err) throw err
      console.log(res)
     inquirer.prompt([
           {
             name: "lastName",
-            type: "list",
+            type: "rawlist",
             choices: function() {
               var lastName = [];
               for (var i = 0; i < res.length; i++) {
@@ -196,7 +197,7 @@ function addEmployee() {
           },
           {
             name: "role",
-            type: "list",
+            type: "rawlist",
             message: "What is the Employees new title? ",
             choices: selectRole()
           },
@@ -214,16 +215,17 @@ function addEmployee() {
         function(err){
             if (err) throw err
             console.table(val)
-            startPrompt()
+            initApp()
         })
   
     });
   });
 
   }
-//============= Add Employee Role ==========================//
+//Add Employee Role
 function addRole() { 
-  connection.query("SELECT role.title AS Title, role.salary AS Salary FROM role",   function(err, res) {
+  connection.query("SELECT role.title AS Title, role.salary AS Salary FROM role",  
+   function(err, res) {
     inquirer.prompt([
         {
           name: "Title",
@@ -253,16 +255,17 @@ function addRole() {
     });
   });
   }
-//============= Add Department ==========================//
+
 function addDepartment() { 
 
     inquirer.prompt([
         {
           name: "name",
           type: "input",
-          message: "What Department would you like to add?"
+          message: "What Department are we adding?"
         }
-    ]).then(function(res) {
+    ])
+    .then(function(res) {
         var query = connection.query(
             "INSERT INTO department SET ? ",
             {
@@ -276,5 +279,4 @@ function addDepartment() {
             }
         )
     })
-
-}
+  }
