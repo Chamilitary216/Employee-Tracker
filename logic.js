@@ -171,7 +171,7 @@ function addEmployee() {
       }, function(err){
           if (err) throw err
           console.table(val)
-          startPrompt()
+          initApp()
       })
 
   })
@@ -248,7 +248,7 @@ function addRole() {
             function(err) {
                 if (err) throw err
                 console.table(res);
-                startPrompt();
+                initApp();
             }
         )
 
@@ -275,7 +275,7 @@ function addDepartment() {
             function(err) {
                 if (err) throw err
                 console.table(res);
-                startPrompt();
+                initApp();
             }
         )
     })
